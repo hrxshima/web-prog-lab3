@@ -12,9 +12,29 @@ export function createBoard(element) {
     cells.append(cell);
   }
 
+  function tileTransform(position) {
+    const column = position % SIZE;
+    const row = Math.floor(position / SIZE);
+    return `translate(calc(${column * 100}% + ${column} * var(--gutter)), calc(${row * 100}% + ${row} * var(--gutter)))`;
+  }
+
   function positionTile(tile, position) {
-    tile.style.setProperty('--column', position % SIZE);
-    tile.style.setProperty('--row', Math.floor(position / SIZE));
+    if (tile.position === position) return;
+    tile.position = position;
+    tile.node.style.transform = tileTransform(position);
+  }
+
+  function setFaceValue(face, value) {
+    face.textContent = value;
+    face.dataset.value = value > 4096 ? 'higher' : value;
+    face.style.setProperty('--digits', face.textContent.length);
+  }
+
+  function createFace(value) {
+    const face = document.createElement('div');
+    face.className = 'tile-face';
+    setFaceValue(face, value);
+    return face;
   }
 
   function animateFace(face, frames, duration) {
@@ -29,31 +49,21 @@ export function createBoard(element) {
     board.forEach((tile, position) => {
       if (!tile) return;
       active.add(tile.id);
-      let node = tiles.get(tile.id);
-      if (!node) {
-        node = document.createElement('div');
+      let rendered = tiles.get(tile.id);
+      if (!rendered) {
+        const node = document.createElement('div');
         node.className = 'tile';
         node.dataset.id = tile.id;
-        const face = document.createElement('div');
-        face.className = 'tile-face';
-        node.append(face);
-        tiles.set(tile.id, node);
+        node.append(createFace(tile.value));
+        rendered = { node };
+        tiles.set(tile.id, rendered);
         layer.append(node);
       }
 
-      const face = node.firstElementChild;
-      if (face.textContent !== String(tile.value)) {
-        face.textContent = tile.value;
-        face.dataset.value = tile.value > 4096 ? 'higher' : tile.value;
-        face.style.setProperty('--digits', face.textContent.length);
-      }
-      positionTile(node, position);
+      const face = rendered.node.firstElementChild;
+      if (face.textContent !== String(tile.value)) setFaceValue(face, tile.value);
+      positionTile(rendered, position);
 
-      if (effects.merged?.includes(tile.id)) {
-        animations.push(animateFace(face, [
-          { transform: 'scale(.93)' }, { transform: 'scale(1.09)' }, { transform: 'scale(1)' },
-        ], 135));
-      }
       if (effects.spawned?.includes(tile.id)) {
         animations.push(animateFace(face, [
           { transform: 'scale(.55)', opacity: 0 }, { transform: 'scale(1)', opacity: 1 },
@@ -61,7 +71,7 @@ export function createBoard(element) {
       }
     });
 
-    for (const [id, node] of tiles) {
+    for (const [id, { node }] of tiles) {
       if (active.has(id)) continue;
       node.remove();
       tiles.delete(id);
@@ -70,22 +80,49 @@ export function createBoard(element) {
     return Promise.all(animations);
   }
 
+  async function crossfadeMerges(board, mergedIds) {
+    const layers = board.filter(tile => tile && mergedIds.includes(tile.id)).map(({ id, value }) => {
+      const { node } = tiles.get(id);
+      const incoming = createFace(value);
+      // The old face stays opaque under the incoming face until the handoff.
+      node.classList.add('tile--merging');
+      incoming.classList.add('tile-face--incoming');
+      node.append(incoming);
+      const animation = incoming.animate([
+        { opacity: 0, transform: 'scale(1)' },
+        { opacity: 1, transform: 'scale(1.09)', offset: .65 },
+        { opacity: 1, transform: 'scale(1)' },
+      ], { duration: 135, easing: 'ease-out', fill: 'both' });
+      return { node, incoming, animation };
+    });
+
+    await Promise.all(layers.map(({ animation }) => animation.finished));
+    for (const { node, incoming, animation } of layers) {
+      node.firstElementChild.remove();
+      incoming.classList.remove('tile-face--incoming');
+      node.classList.remove('tile--merging');
+      animation.cancel();
+    }
+  }
+
   async function animateMove({ frames, game, spawned }) {
+    if (reducedMotion.matches) return display(game.board);
+
     for (const frame of frames) {
-      const animations = [];
-      for (const [id, destination] of frame.motions) {
+      const slides = Array.from(frame.motions, ([id, destination]) => {
         const tile = tiles.get(id);
-        const from = getComputedStyle(tile).transform;
+        const from = tileTransform(tile.position);
         positionTile(tile, destination);
-        const to = getComputedStyle(tile).transform;
-        if (from !== to && !reducedMotion.matches) {
-          animations.push(tile.animate([{ transform: from }, { transform: to }], {
-            duration: 115, easing: 'cubic-bezier(.2,.65,.35,1)',
-          }).finished);
-        }
+        if (reducedMotion.matches) return;
+        return tile.node.animate([{ transform: from }, { transform: tile.node.style.transform }], {
+          duration: 115, easing: 'cubic-bezier(.2,.65,.35,1)', fill: 'backwards',
+        }).finished;
+      });
+      await Promise.all(slides);
+      if (frame.merged.length && !reducedMotion.matches) {
+        await crossfadeMerges(frame.board, frame.merged);
       }
-      await Promise.all(animations);
-      await display(frame.board, { merged: frame.merged });
+      await display(frame.board);
     }
     await display(game.board, { spawned });
   }

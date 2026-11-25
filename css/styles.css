@@ -338,11 +338,9 @@ kbd {
   position: absolute;
   width: var(--cell-size);
   height: var(--cell-size);
-  transform: translate(
-    calc(var(--column) * (100% + var(--gutter))),
-    calc(var(--row) * (100% + var(--gutter)))
-  );
 }
+
+.tile--merging { z-index: 1; }
 
 .tile-face {
   --tile-color: var(--paper-light);
@@ -359,6 +357,8 @@ kbd {
   font-weight: 700;
   line-height: 1;
 }
+
+.tile-face--incoming { position: absolute; inset: 0; opacity: 0; }
 
 .tile-face[data-value="4"] { --tile-color: #ead0dc; }
 .tile-face[data-value="8"] { --tile-color: #c6cfd0; }
