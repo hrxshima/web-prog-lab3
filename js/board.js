@@ -90,9 +90,9 @@ export function createBoard(element) {
       node.append(incoming);
       const animation = incoming.animate([
         { opacity: 0, transform: 'scale(1)' },
-        { opacity: 1, transform: 'scale(1.09)', offset: .65 },
+        { opacity: .6, transform: 'scale(1.025)', offset: .6 },
         { opacity: 1, transform: 'scale(1)' },
-      ], { duration: 135, easing: 'ease-out', fill: 'both' });
+      ], { duration: 135, easing: 'ease-in-out', fill: 'both' });
       return { node, incoming, animation };
     });
 

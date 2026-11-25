@@ -34,10 +34,12 @@ function persist(updated = data) {
   return success;
 }
 
-function syncButtons() {
-  undoButton.disabled = busy || data.game.over || !data.game.previous;
-  newButton.disabled = busy;
-  leaderboardButton.disabled = busy;
+function setBusy(next) {
+  busy = next;
+  for (const button of [newButton, undoButton, leaderboardButton]) {
+    if (busy) button.setAttribute('aria-disabled', 'true');
+    else button.removeAttribute('aria-disabled');
+  }
 }
 
 function updateScore() {
@@ -68,7 +70,7 @@ function refresh(announcement = '') {
   boardElement.setAttribute('aria-label', `2048 board. ${description}`);
   if (announcement) status.textContent = `${announcement} Score ${game.score}. ${description}`;
   updateScore();
-  syncButtons();
+  undoButton.disabled = game.over || !game.previous;
   if (game.over) showGameOver();
 }
 
@@ -86,15 +88,14 @@ async function move(direction) {
   const turn = playMove(data.game, direction);
   if (!turn) return;
 
-  busy = true;
-  syncButtons();
+  setBusy(true);
   data = { ...data, game: turn.game, best: Math.max(data.best, turn.game.score) };
   persist();
 
   try {
     await board.animateMove(turn);
   } finally {
-    busy = false;
+    setBusy(false);
     const next = pendingDirection;
     pendingDirection = null;
     refresh('Board moved.');
@@ -133,6 +134,7 @@ undoButton.addEventListener('click', () => {
 });
 
 leaderboardButton.addEventListener('click', () => {
+  if (busy) return;
   renderLeaderboard(get('records'), get('empty-leaderboard'), data.records);
   leaderboard.showModal();
 });
