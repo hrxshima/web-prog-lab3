@@ -12,6 +12,14 @@
   font-display: swap;
 }
 
+@font-face {
+  font-family: "VT323 Numeral Two";
+  src: url("../assets/fonts/VT323.ttf") format("truetype");
+  font-display: swap;
+  size-adjust: 118%;
+  unicode-range: U+0032;
+}
+
 :root {
   color-scheme: light;
   --paper: #ede9e1;
@@ -31,6 +39,7 @@
   --grain: url("../assets/images/grain.svg");
   --font-main: "Pixelify Sans", VT323, monospace;
   --font-detail: VT323, "Pixelify Sans", monospace;
+  --font-numerals: "VT323 Numeral Two", var(--font-main);
   --content-width: 71rem;
   --board-size: 30.75rem;
 }
@@ -138,6 +147,7 @@ button { color: inherit; }
   margin: 0 0 0 -.025em;
   position: relative;
   color: var(--graphite);
+  font-family: var(--font-numerals);
   font-size: clamp(5.3rem, 10vw, 9.15rem);
   line-height: .88;
   font-weight: 700;
@@ -346,6 +356,7 @@ kbd {
   outline-offset: -4px;
   color: var(--tile-ink);
   background: var(--grain), var(--tile-color);
+  font-family: var(--font-numerals);
   font-size: min(11cqi, calc(31cqi / var(--digits)));
   font-weight: 700;
   line-height: 1;
