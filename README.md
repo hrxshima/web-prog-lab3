@@ -54,8 +54,8 @@ node --test
 
 ## Шрифты
 
-- Pixelify Sans используется для заголовка, чисел и элементов управления. [Источник](https://github.com/google/fonts/tree/main/ofl/pixelifysans) · [SIL Open Font License 1.1](assets/fonts/PixelifySans-OFL.txt)
-- VT323 используется для вспомогательных подписей и таблицы. [Источник](https://github.com/google/fonts/tree/main/ofl/vt323) · [SIL Open Font License 1.1](assets/fonts/VT323-OFL.txt)
+- Pixelify Sans используется для основного текста и элементов управления. [Источник](https://github.com/google/fonts/tree/main/ofl/pixelifysans) · [SIL Open Font License 1.1](assets/fonts/PixelifySans-OFL.txt)
+- VT323 используется для цифр одинаковой ширины, вспомогательных подписей и таблицы. [Источник](https://github.com/google/fonts/tree/main/ofl/vt323) · [SIL Open Font License 1.1](assets/fonts/VT323-OFL.txt)
 
 ## Публикация
 

@@ -38,6 +38,10 @@
   .keys { display: none; }
 }
 
+@media (max-width: 26rem) {
+  .dialog th:last-child { width: 36%; }
+}
+
 @media (max-width: 24rem) {
   .poster { width: calc(100% - 1rem); margin-block: .6rem; }
   .layout { padding-inline: .85rem; }
