@@ -27,7 +27,7 @@
   .actions { grid-row: 4; }
   .instructions { grid-row: 5; margin-block-start: .95rem; }
   .instructions p { max-width: 34ch; }
-  .collage-flowers { width: 32%; right: -5%; bottom: -13%; }
+  .collage-flowers { width: 32%; right: -5%; bottom: -8%; }
   .collage-print { right: -3%; top: -4%; }
   .collage-paper { inset: 4% -1% -2% 8%; }
   .poster-rule { height: 1.38rem; }

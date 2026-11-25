@@ -432,3 +432,16 @@ kbd {
 @media (prefers-reduced-motion: reduce) {
   .button { transition: none; }
 }
+
+@media (min-width: 58rem) {
+  .instructions { position: relative; }
+  .instructions::after {
+    position: absolute;
+    inset: .25rem 0 0 auto;
+    width: 31%;
+    content: "";
+    background: url("../assets/images/flowers.svg") center / contain no-repeat;
+    opacity: .65;
+    pointer-events: none;
+  }
+}
