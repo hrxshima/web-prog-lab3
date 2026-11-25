@@ -1,0 +1,44 @@
+@media (max-width: 66rem) {
+  .poster { width: min(100% - 2.5rem, var(--content-width)); }
+  .layout { padding-inline: 2.6rem 3.1rem; }
+  .masthead h1 { font-size: clamp(5rem, 11.6vw, 7.8rem); }
+  .masthead-moth { right: 4%; }
+}
+
+@media (max-width: 47rem) {
+  body { display: block; }
+  .poster { width: min(100% - 2rem, 34rem); margin-block: 1.2rem; }
+  .layout {
+    grid-template-columns: minmax(0, 1fr);
+    align-items: start;
+    gap: 0;
+    padding: 1.45rem clamp(1rem, 5vw, 2rem) 1.6rem;
+  }
+
+  .console { display: contents; }
+  .masthead, .scores, .actions, .instructions, .play-area { grid-column: 1; }
+  .masthead { grid-row: 1; width: fit-content; margin: 0 0 .9rem; }
+  .masthead h1 { font-size: clamp(4.65rem, 17vw, 7.1rem); }
+  .masthead::before { inset: 18% -14% 3% -4%; }
+  .masthead::after { inset: 3% -7% 13% -2%; }
+  .masthead-moth { width: clamp(2.9rem, 11vw, 4.85rem); right: -28%; top: -7%; }
+  .scores { grid-row: 2; margin-block-end: .45rem; }
+  .play-area { grid-row: 3; margin-block: .96rem 1.65rem; }
+  .actions { grid-row: 4; }
+  .instructions { grid-row: 5; margin-block-start: .95rem; }
+  .instructions p { max-width: 34ch; }
+  .collage-flowers { width: 32%; right: -5%; bottom: -13%; }
+  .collage-print { right: -3%; top: -4%; }
+  .collage-paper { inset: 4% -1% -2% 8%; }
+  .poster-rule { height: 1.38rem; }
+  .button { min-height: 2.75rem; }
+}
+
+@media (pointer: coarse) {
+  .keys { display: none; }
+}
+
+@media (max-width: 24rem) {
+  .poster { width: calc(100% - 1rem); margin-block: .6rem; }
+  .layout { padding-inline: .85rem; }
+}
